@@ -5,7 +5,6 @@ chat = document.getElementById("chat")
 input_box = document.getElementById("user-input")
 send_btn = document.getElementById("send")
 
-# Load memory from browser
 def load(key, default):
     data = window.localStorage.getItem(key)
     return JSON.parse(data) if data else default
@@ -14,8 +13,8 @@ def save(key, value):
     window.localStorage.setItem(key, JSON.stringify(value))
 
 memory = load("memory", {})
-knowledge = load("knowledge", {})  # learned responses
-usage = load("usage", {})          # response weights
+knowledge = load("knowledge", {})
+usage = load("usage", {})
 
 def add_message(text, sender):
     div = document.createElement("div")
@@ -25,7 +24,6 @@ def add_message(text, sender):
     chat.scrollTop = chat.scrollHeight
 
 def learn_response(text):
-    # learn: hello = hi there
     try:
         left, right = text.split("=", 1)
         trigger = left.replace("learn:", "").strip()
@@ -36,9 +34,9 @@ def learn_response(text):
             knowledge[trigger].append(response)
             save("knowledge", knowledge)
 
-        return f"Got it 😎 When someone says '{trigger}', I can reply '{response}'"
+        return f"Learned 👍 When someone says '{trigger}', I can say '{response}'"
     except:
-        return "Learning format: learn: trigger = response"
+        return "Use: learn: trigger = response"
 
 def remember_fact(text):
     if "my name is" in text:
@@ -46,7 +44,6 @@ def remember_fact(text):
         memory["name"] = name
         save("memory", memory)
         return f"Nice to meet you, {name} 👋"
-
     return None
 
 def adaptive_reply(trigger):
@@ -54,7 +51,6 @@ def adaptive_reply(trigger):
     if not options:
         return None
 
-    # Weighted choice based on usage
     weights = []
     for r in options:
         key = f"{trigger}|{r}"
@@ -86,10 +82,10 @@ def bot_reply(text):
         return f"Your name is {memory['name']} 🙂"
 
     return random.choice([
-        "Tell me more.",
-        "Interesting 🤔",
-        "I’m still learning.",
-        "You can teach me something."
+        "Tell me something new.",
+        "You can teach me 👀",
+        "Interesting.",
+        "I'm learning as we talk."
     ])
 
 def send_message(event=None):
@@ -106,4 +102,4 @@ def send_message(event=None):
 send_btn.onclick = send_message
 input_box.onkeypress = lambda e: send_message() if e.key == "Enter" else None
 
-add_message("Learning bot online 🤖🧠", "bot")
+add_message("Learning chatbot online 🤖🧠", "bot")
